@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: url('background.jpg') center/cover no-repeat;
+            position: relative;
+        }
+
+        .snowflake {
+            position: absolute;
+            background: url('snow.png') no-repeat;
+            background-size: contain;
+            animation-name: fall;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10%) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            
+            // Rastgele boyut (15px ile 35px arası)
+            const size = Math.random() * 150 + 15;
+            snowflake.style.width = `${size}px`;
+            snowflake.style.height = `${size}px`;
+            
+            // Rastgele başlangıç pozisyonu
+            snowflake.style.left = `${Math.random() * 100}vw`;
+            
+            // Rastgele animasyon süresi (5 ile 15 saniye arası)
+            const duration = Math.random() * 10 + 5;
+            snowflake.style.animationDuration = `${duration}s`;
+
+            // Mouse ile etkileşim için event listener ekle
+            snowflake.addEventListener('mouseover', () => {
+                snowflake.classList.add('fade-out');
+                setTimeout(() => {
+                    snowflake.remove();
+                }, 300); // 300ms sonra elementi kaldır (fade-out animasyonu ile eşleşir)
+            });
+            
+            document.body.appendChild(snowflake);
+            
+            // Animasyon bittiğinde kar tanesini kaldır
+            setTimeout(() => {
+                if (document.body.contains(snowflake)) {
+                    snowflake.remove();
+                }
+            }, duration * 1000);
+        }
+
+        // Her 100ms'de bir kar tanesi oluştur
+        let interval = 100;
+        let timeoutId;
+
+        function updateSnowfallSpeed() {
+            // Rastgele hız değişimi (50ms ile 200ms arası)
+            interval = Math.random() * 150 + 50;
+            clearTimeout(timeoutId);
+            
+            function createSnowWithInterval() {
+                createSnowflake();
+                timeoutId = setTimeout(createSnowWithInterval, interval);
+            }
+            
+            createSnowWithInterval();
+        }
+
+        // Her 3-7 saniye arasında kar yağış hızını değiştir
+        setInterval(() => {
+            updateSnowfallSpeed();
+        }, Math.random() * 4000 + 3000);
+
+        // Başlangıçta kar yağışını başlat
+        updateSnowfallSpeed();
+    </script>
+</body>
+</html>
